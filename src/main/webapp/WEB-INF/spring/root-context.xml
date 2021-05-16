@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		<bean id="jdbcTemplate"
+		  class="org.springframework.jdbc.core.JdbcTemplate"
+		  p:dataSource-ref="dataSource"
+	>
+	</bean> 
+	<!-- connection pool 오브젝트 생성  pom.xml에 hikariCP 의존 라이브러리 추가-->
+	<bean
+		id="dataSource"
+		class="com.zaxxer.hikari.HikariDataSource"
+		p:username="ace"
+		p:password="me"
+		p:jdbcUrl="jdbc:oracle:thin:@localhost:1521/xepdb1"
+		p:driverClassName="oracle.jdbc.OracleDriver"
+		p:maximumPoolSize="20"
+		>
+	</bean>
+	<!-- Article -->
+	<bean
+		id="articleSqlSession" class="org.mybatis.spring.SqlSessionFactoryBean" 
+		p:dataSource-ref="dataSource"
+		p:typeAliasesPackage="net.developia.mvc.models"
+		/>
+		
+	<bean
+		id="articleDAO" 
+		class="org.mybatis.spring.mapper.MapperFactoryBean" 
+		p:sqlSessionFactory-ref="articleSqlSession"
+		p:mapperInterface="net.developia.mvc.models.ArticleDAO"
+		/>
+		
+		<!-- Member -->
+		<bean
+		id="memberSqlSession" class="org.mybatis.spring.SqlSessionFactoryBean" 
+		p:dataSource-ref="dataSource"
+		p:typeAliasesPackage="net.developia.mvc.models"
+		/>
+		
+	<bean
+		id="memberDAO" 
+		class="org.mybatis.spring.mapper.MapperFactoryBean" 
+		p:sqlSessionFactory-ref="memberSqlSession"
+		p:mapperInterface="net.developia.mvc.models.MemberDAO"
+		/>
+	
+		
+</beans>

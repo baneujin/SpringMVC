@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.developia.mvc.models.ArticleDAO">
+	<select id="getArticleList" resultType="ArticleDTO">
+select level, no , parentno,LPAD(' ',4*(level-1)) || title title,
+		content, id,regdate,readcount 
+		from t_board 
+		start with parentno = 0 
+		connect by prior no = parentno 
+		order siblings by regdate desc 
+	</select>
+
+	<insert id="insertArticle" parameterType="articleDTO" >
+	INSERT INTO t_board(no, title, id, password, content, parentno)
+	VALUES(seq_board.nextval, #{title}, #{id}, #{password}, #{content},#{parentno})
+	</insert>
+	
+	<select id="getDetail" resultType="articleDTO" parameterType="long">
+	<![CDATA[
+	select no, title, id, regdate, readcount, content
+	from   t_board
+	where  no=#{no} 
+	]]>
+	</select>
+	
+	<delete id="deleteArticle" parameterType="articleDTO">
+	delete t_board
+	where  no=#{no} and password=#{password}
+	</delete>
+	
+	<update id="updateArticle" parameterType="articleDTO">
+	UPDATE t_board SET
+	       title= #{title}      
+	      ,content= #{content}  
+	WHERE  no= #{no} AND password= #{password}
+	</update>
+	
+	
+	</mapper>
